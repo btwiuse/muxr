@@ -1,4 +1,4 @@
-package muxw
+package muxr
 
 import (
 	"net/http"

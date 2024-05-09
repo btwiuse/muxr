@@ -1,4 +1,4 @@
-package muxw_test
+package muxr_test
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"marwan.io/muxw"
+	"github.com/btwiuse/muxr"
 )
 
 var methods = [...]string{
@@ -22,7 +22,7 @@ var methods = [...]string{
 }
 
 func TestRouterMethods(t *testing.T) {
-	r := muxw.NewRouter()
+	r := muxr.NewRouter()
 	testCases := [...]*struct {
 		method   string
 		register func(string, http.HandlerFunc)
@@ -74,7 +74,7 @@ func TestRouterMethods(t *testing.T) {
 }
 
 func TestMiddleware(t *testing.T) {
-	r := muxw.NewRouter()
+	r := muxr.NewRouter()
 
 	got := []string{}
 	want := []string{"one", "two", "three", "four"}
@@ -114,14 +114,14 @@ func TestMiddleware(t *testing.T) {
 }
 
 func TestMount(t *testing.T) {
-	r := muxw.NewRouter()
+	r := muxr.NewRouter()
 
 	var helloCalled, prefixCalled bool
 	r.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
 		helloCalled = true
 	})
 
-	subRouter := muxw.NewRouter()
+	subRouter := muxr.NewRouter()
 	subRouter.Get("/prefix/hello", func(w http.ResponseWriter, r *http.Request) {
 		prefixCalled = true
 	})
@@ -207,7 +207,7 @@ func TestTrailingSlash(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			r := muxw.NewRouter()
+			r := muxr.NewRouter()
 			var called int
 			r.Get(tc.path, func(w http.ResponseWriter, r *http.Request) {
 				called++

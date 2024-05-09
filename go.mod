@@ -1,3 +1,3 @@
-module marwan.io/muxw
+module github.com/btwiuse/muxr
 
 go 1.22.0
