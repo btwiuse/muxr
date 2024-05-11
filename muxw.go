@@ -50,55 +50,55 @@ func chain(h http.Handler, mws ...Middleware) http.Handler {
 // Get register a handler func under the given path for
 // the http method GET.
 func (r *Router) Get(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodGet, path, hf)
+	r.HandleMethod(http.MethodGet, path, hf)
 }
 
 // Head register a handler func under the given path for
 // the http method HEAD.
 func (r *Router) Head(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodHead, path, hf)
+	r.HandleMethod(http.MethodHead, path, hf)
 }
 
 // Post register a handler func under the given path for
 // the http method POST.
 func (r *Router) Post(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodPost, path, hf)
+	r.HandleMethod(http.MethodPost, path, hf)
 }
 
 // Put register a handler func under the given path for
 // the http method PUT.
 func (r *Router) Put(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodPut, path, hf)
+	r.HandleMethod(http.MethodPut, path, hf)
 }
 
 // Patch register a handler func under the given path for
 // the http method PATCH.
 func (r *Router) Patch(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodPatch, path, hf)
+	r.HandleMethod(http.MethodPatch, path, hf)
 }
 
 // Delete register a handler func under the given path for
 // the http method DELETE.
 func (r *Router) Delete(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodDelete, path, hf)
+	r.HandleMethod(http.MethodDelete, path, hf)
 }
 
 // Connect register a handler func under the given path for
 // the http method CONNECT.
 func (r *Router) Connect(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodConnect, path, hf)
+	r.HandleMethod(http.MethodConnect, path, hf)
 }
 
 // Options register a handler func under the given path for
 // the http method OPTIONS.
 func (r *Router) Options(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodOptions, path, hf)
+	r.HandleMethod(http.MethodOptions, path, hf)
 }
 
 // Trace register a handler func under the given path for
 // the http method TRACE.
 func (r *Router) Trace(path string, hf http.HandlerFunc) {
-	r.Handle(http.MethodTrace, path, hf)
+	r.HandleMethod(http.MethodTrace, path, hf)
 }
 
 // Middleware describes the signature of an http
@@ -118,8 +118,8 @@ func (r *Router) Mount(pathPrefix string, h http.Handler) {
 	r.m.Handle(strings.TrimSuffix(pathPrefix, "/")+"/", h)
 }
 
-// Handle registers the given handler to the given method and path.
-func (r *Router) Handle(method, path string, handler http.Handler) {
+// HandleMethod registers the given handler to the given method and path.
+func (r *Router) HandleMethod(method, path string, handler http.Handler) {
 	if r.initted {
 		panic("already initialized")
 	}
@@ -156,6 +156,24 @@ func (r *Router) Handle(method, path string, handler http.Handler) {
 		path += "/{$}"
 		r.m.Handle(method+" "+path, handler)
 	}
+}
+
+// Handle registers the given handler to the given path.
+func (r *Router) Handle(path string, handler http.Handler) {
+	if r.initted {
+		panic("already initialized")
+	}
+
+	r.m.Handle(path, handler)
+}
+
+// Handle registers the given handler to the given path.
+func (r *Router) HandleFunc(path string, hf http.HandlerFunc) {
+	if r.initted {
+		panic("already initialized")
+	}
+
+	r.m.Handle(path, hf)
 }
 
 // Handler returns the handler to use for the given request, consulting

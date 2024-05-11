@@ -228,3 +228,40 @@ func TestTrailingSlash(t *testing.T) {
 		})
 	}
 }
+
+func TestHandleAll(t *testing.T) {
+	const wantCode = http.StatusCreated
+
+	for _, tc := range [...]struct {
+		name     string
+		path     string
+		requests []string
+	}{
+		{
+			name:     "catch_all",
+			path:     "/",
+			requests: []string{"/hello", "/hello/", "/a/b/c", "/"},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := muxr.NewRouter()
+			var called int
+			r.HandleFunc(tc.path, func(w http.ResponseWriter, r *http.Request) {
+				called++
+				w.WriteHeader(wantCode)
+			})
+
+			for _, path := range tc.requests {
+				req := httptest.NewRequest(http.MethodGet, path, nil)
+				w := httptest.NewRecorder()
+				r.ServeHTTP(w, req)
+				if w.Code != wantCode {
+					t.Fatalf("%s expected status code %d but got %d", path, wantCode, w.Code)
+				}
+			}
+			if called != len(tc.requests) {
+				t.Fatalf("expected the handler to be called %d times but got %d", len(tc.requests), called)
+			}
+		})
+	}
+}
